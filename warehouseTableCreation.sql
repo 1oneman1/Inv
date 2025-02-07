@@ -1,0 +1,61 @@
+-- Create Users Table
+CREATE TABLE Users (
+    user_id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL CHECK (role IN ('admin', 'warehouse_keeper', 'manager', 'assigned_user')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create Categories Table
+CREATE TABLE Categories (
+    category_id SERIAL PRIMARY KEY,
+    category_name VARCHAR(100) NOT NULL,
+    parent_category_id INT REFERENCES Categories(category_id) ON DELETE CASCADE
+);
+
+-- Create Products Table
+CREATE TABLE Products (
+    product_id SERIAL PRIMARY KEY,
+    product_code VARCHAR(50) UNIQUE NOT NULL,
+    product_name VARCHAR(100) NOT NULL,
+    category_id INT REFERENCES Categories(category_id) ON DELETE CASCADE,
+    specs JSONB
+);
+
+-- Create Suppliers Table
+CREATE TABLE Suppliers (
+    supplier_id SERIAL PRIMARY KEY,
+    supplier_name VARCHAR(100) NOT NULL,
+    supplier_type VARCHAR(20) NOT NULL CHECK (supplier_type IN ('local', 'worldwide', 'internal'))
+);
+
+-- Create Inventory Table
+CREATE TABLE Inventory (
+    inventory_id SERIAL PRIMARY KEY,
+    product_id INT REFERENCES Products(product_id) ON DELETE CASCADE,
+    serial_number VARCHAR(100) UNIQUE,
+    supplier_id INT REFERENCES Suppliers(supplier_id) ON DELETE CASCADE,
+    received_date DATE NOT NULL,
+    reference_number VARCHAR(100) NOT NULL,
+    status VARCHAR(20) NOT NULL CHECK (status IN ('available', 'assigned', 'used_in_manufacturing', 'destroyed', 'decomposed')),
+    assigned_user_id INT REFERENCES Users(user_id) ON DELETE SET NULL,
+    manufactured_product_id INT REFERENCES Inventory(inventory_id) ON DELETE SET NULL
+);
+
+-- Create InternalEntities Table
+CREATE TABLE InternalEntities (
+    internal_entity_id SERIAL PRIMARY KEY,
+    entity_name VARCHAR(100) NOT NULL,
+    entity_info TEXT
+);
+
+-- Create UserEntities Table
+CREATE TABLE UserEntities (
+    user_entity_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES Users(user_id) ON DELETE CASCADE,
+    internal_entity_id INT REFERENCES InternalEntities(internal_entity_id) ON DELETE CASCADE,
+    start_date DATE NOT NULL,
+    end_date DATE
+);
+

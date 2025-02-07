@@ -1,0 +1,31 @@
+Key Relationships
+Products belong to Categories (hierarchical structure).
+
+Inventory tracks individual items (with or without serial numbers) and their status.
+
+AssignedUsers are linked to InternalEntities and can hold products.
+
+Suppliers provide products, and their type (local, worldwide, internal) is tracked.
+
+Inventory can reference itself for manufactured products (e.g., tracking components used in manufacturing).
+
+
+
+Workflow Implementation
+Adding Products:
+
+The warehouse keeper selects a product from the dropdown (fetched from the Products table) and adds it to the Inventory table.
+
+If the product is manufactured, the manufactured_product_id field links it to its components.
+
+Returning Products:
+
+The warehouse keeper updates the status field in the Inventory table (e.g., from assigned to available).
+
+Manufacturing:
+
+When a new product is manufactured, its components are marked as used_in_manufacturing in the Inventory table.
+
+Decomposing/Destroying Products:
+
+Update the status field to decomposed or destroyed.
