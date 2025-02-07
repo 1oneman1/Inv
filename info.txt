@@ -1,5 +1,5 @@
 Key Relationships
-Products belong to Categories (hierarchical structure).
+Products belong to Categories (hierarchical structure @lij@na@ya).
 
 Inventory tracks individual items (with or without serial numbers) and their status.
 
